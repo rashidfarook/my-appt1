@@ -14,18 +14,18 @@ class Slot extends React.Component {
       value: '',
       status: '',
       show: false,
-      items: {} 
+      items: {names:["", "","","","","","","",""]} 
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   handleChange(event) {
-    this.setState({value: event.target.value});
+    this.setState({uname: event.target.value});
   }
   handleSubmit(event) {
-    console.log('Appointment submitted ...')
-    console.log('Name: ' + this.state.value);
-    console.log('Phone: ' + this.state.phone);
+    let newitems = this.state.items;
+    newitems.names[this.props.stime - 9] = event.target.value;
+    this.setState({items: newitems});
     event.preventDefault();
   }
 
@@ -39,22 +39,29 @@ class Slot extends React.Component {
     if(t<=12) return t + ':00AM';
     else return (t-12) + ':00PM'
   }
+  showName = () => {
+    let newitems = this.state.items;
+    let cname = newitems.names[this.props.stime - 9];
+    if(cname!='') return cname;
+    else return this.state.uname;
+  }
 
   render() {
+    let btn_class = this.state.status != 'X' ? "slot" : "slotred";
     return (
       <div>
       <Modal show={this.state.show} handleClose={this.hideModal} >
         <form onSubmit={this.handleSubmit}>
           <label>
             Name:
-            <input type="text" value={this.state.value} onChange={this.handleChange} />
+            <input type="text" value={this.showName()} name="uname" onChange={this.handleChange} />
           </label>       
           <input type="submit" value="Set Appointment" />
         </form>
       <pre>{JSON.stringify(this.props)}</pre>
       </Modal>
-      <button className="slot" onClick={()=>{ this.showModal(); this.setState({status: 'X'})}}>
-        {(this.state.status === 'X') ? this.state.status : this.showTime(this.props.status)}
+      <button className={btn_class} onClick={()=>{ this.showModal(); this.setState({status: 'X'})}}>
+        {this.showTime(this.props.stime)}
       </button>
       </div>
     );
@@ -63,7 +70,7 @@ class Slot extends React.Component {
 
 class App extends Component {
   renderSlot(i) {
-    return <Slot status={i} />;
+    return <Slot stime={i} />;
   }
   renderSlots(s, e) {
     for(let cnt=9;cnt<17;cnt++)
