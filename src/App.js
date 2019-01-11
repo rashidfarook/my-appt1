@@ -14,13 +14,20 @@ class Slot extends React.Component {
       value: '',
       status: '',
       show: false,
-      items: {names:["", "","","","","","","",""]} 
+      items: {
+        names:["", "","","","","","","",""],
+        phones:["", "","","","","","","",""]
+      } 
     };
     this.handleChange = this.handleChange.bind(this);
+    this.handleChangePhone = this.handleChangePhone.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   handleChange(event) {
     this.setState({uname: event.target.value});
+  }
+  handleChangePhone(event) {
+    this.setState({uphone: event.target.value});
   }
   handleSubmit(event) {
     let newitems = this.state.items;
@@ -45,7 +52,12 @@ class Slot extends React.Component {
     if(cname!='') return cname;
     else return this.state.uname;
   }
-
+  showPhone = () => {
+    let newitems = this.state.items;
+    let cphone = newitems.phones[this.props.stime - 9];
+    if(cphone!='') return cphone;
+    else return this.state.uphone;
+  }
   render() {
     let btn_class = this.state.status != 'X' ? "slot" : "slotred";
     return (
@@ -56,9 +68,14 @@ class Slot extends React.Component {
             Name:
             <input type="text" value={this.showName()} name="uname" onChange={this.handleChange} />
           </label>       
-          <input type="submit" value="Set Appointment" />
+          <br />
+          <label>
+            Phone:
+            <input type="text" value={this.showPhone()} name="uphone" onChange={this.handleChangePhone} />
+          </label>    
+          <br />   
+          <input type="submit" value="Set Appointment" />          
         </form>
-      <pre>{JSON.stringify(this.props)}</pre>
       </Modal>
       <button className={btn_class} onClick={()=>{ this.showModal(); this.setState({status: 'X'})}}>
         {this.showTime(this.props.stime)}
